@@ -1,0 +1,383 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: white;
+    color: #333;
+    overflow-y: auto; /* Enable vertical scrolling */
+    margin: 0;
+    padding: 0;
+}
+
+.logo {
+    width: 150px;
+}
+
+h1 {
+    font-weight: 700;
+}
+
+p {
+    max-width: 90%;
+    text-align: center;
+    line-height: 1.6;
+    margin: auto;
+}
+
+.btn-custom {
+    background-color: #f25100; /* Orange */
+    color: #ffffff;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 30px;
+    box-shadow: 0px 13px 24px -7px #9E9E9E;
+    transition: all 200ms ease-in-out;
+    cursor: pointer;
+    margin-right: 20px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.btn-custom:hover,
+.btn-custom:focus {
+    background-color: #ffffff;
+    color: #f25100;
+    transform: translateY(-5px);
+    box-shadow: 0px 17px 16px -11px #BDBDBD;
+}
+
+.container-fluid {
+    min-height: 100vh; /* Full viewport height */
+    padding-bottom: 50px; /* Space for bottom content */
+}
+
+.developer-credit {
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+/* Card Styles */
+.card {
+    max-width: 300px;
+    border-radius: 0.5rem;
+    background-color: #b85b09;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid transparent;
+    margin: 15px;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-10px); /* Card hover effect */
+}
+
+.card a {
+    text-decoration: none;
+    color: inherit; /* Inherit color to avoid default link color */
+}
+
+.content {
+    padding: 1.1rem;
+}
+
+/* Updated image class to include different background images */
+.image {
+    object-fit: cover;
+    width: 100%;
+    height: 150px;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    background-size: cover; /* Ensures the image covers the entire area */
+    background-position: center; /* Centers the image */
+}
+
+/* Specific images for each card */
+.image1 {
+    background-image: url('analyze.png'); /* Replace with your first image path */
+}
+
+.image2 {
+    background-image: url('Price_predection.png'); /* Replace with your second image path */
+}
+
+.image3 {
+    background-image: url('Future_crop.png'); /* Replace with your third image path */
+}
+
+.title {
+    color: #111827;
+    font-size: 1.125rem; 
+    line-height: 1.75rem;
+    font-weight: 600;
+}
+
+.desc {
+    margin-top: 0.5rem;
+    color: #000000;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.action {
+    display: inline-flex;
+    margin-top: 1rem;
+    color: #b85b09;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    align-items: center;
+    gap: 0.25rem;
+    background-color: #b85b09;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.action:hover {
+    background-color: #b85b09;
+}
+
+.action span {
+    transition: transform 0.3s ease;
+}
+
+.action:hover span {
+    transform: translateX(4px);
+}
+
+
+
+/* General Body Styles */
+.navbar sidebar-nav collapsed {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+}
+
+/* Navigation Bar Styles */
+/* Sidebar styles */
+.sidebar-nav {
+    background-color: #2c1515;
+    border-right: 1px solid #eee;
+    width: 80px; /* Collapsed width */
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: width 0.3s ease; /* Smooth transition for collapse */
+}
+
+.sidebar-nav.collapsed {
+    width: 250px; /* Expanded width */
+}
+
+/* When expanded, show the labels */
+.sidebar-nav .nav-label {
+    display: none; /* Hidden when collapsed */
+}
+
+.sidebar-nav.collapsed .nav-label {
+    display: inline-block; /* Show labels when expanded */
+    margin-left: 10px;
+}
+
+.sidebar-nav .navbar-brand {
+    cursor: pointer;
+}
+
+/* Logo size in the sidebar */
+.sidebar-nav .nav-logo {
+    width: 40px; /* Size for the logo */
+    transition: width 0.3s ease;
+}
+
+.sidebar-nav .nav-items {
+    margin-top: 50px;
+    width: 100%;
+}
+
+/* Adjust the position of nav items */
+.sidebar-nav .nav-item {
+    margin-bottom: 1.5rem;
+    width: 100%;
+    text-align: center;
+}
+
+/* Nav link styles */
+.sidebar-nav .nav-link {
+    color: #ffffff;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 0.5rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: color 0.3s, background-color 0.3s;
+}
+
+.sidebar-nav .nav-link i {
+    margin-right: 10px;
+}
+
+.sidebar-nav .nav-link:hover {
+    color: #f25100;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+}
+
+/* Style for sign-in/sign-out buttons */
+.nav-items-bottom {
+    margin-top: auto;
+    width: 100%;
+}
+
+/* Main Content Area */
+.content-area {
+    margin-left: 80px; /* Space for the collapsed sidebar */
+    padding: 2rem;
+    flex-grow: 1;
+}
+
+.sidebar-nav.collapsed ~ .content-area {
+    margin-left: 250px; /* Adjust for expanded sidebar */
+}
+
+
+
+
+/* About Us Section */
+.about-us-section {
+    background-color: #fff;
+    color: #333;
+}
+
+.about-us-section h2 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.about-us-section p {
+    font-size: 1.1rem;
+    color: #666;
+    line-height: 1.8;
+}
+
+/* Footer Section Styles */
+.footer-section {
+    background-color: #333;
+    color: #f4f4f4;
+}
+
+.footer-section h5 {
+    color: #fff;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li a {
+    color: #bbb;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-section ul li a:hover {
+    color: #f25100; /* Orange hover effect */
+}
+
+.footer-section p {
+    color: #bbb;
+}
+
+/* Main Logo */
+.logo {
+    width: 150px;
+}
+
+/* Button Hover Effect */
+button:hover {
+    background-color: #ff5722;
+}
+
+
+/* From Uiverse.io by adeladel522 */ 
+.gbtn{
+    position: relative;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    padding-block: 0.5rem;
+    padding-inline: 1.25rem;
+    background-color: rgb(0 107 179);
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ffff;
+    gap: 10px;
+    font-weight: bold;
+    border: 3px solid #ffffff4d;
+    outline: none;
+    overflow: hidden;
+    font-size: 15px;
+  }
+  
+  .icon {
+    width: 24px;
+    height: 24px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .gbtn:hover {
+    transform: scale(1.05);
+    border-color: #fff9;
+  }
+  
+  .gbtn:hover .icon {
+    transform: translate(4px);
+  }
+  
+  .gbtn:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+  
+  .gbtn::before {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 100%;
+    background-image: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -100px;
+    opacity: 0.6;
+  }
+  
+  @keyframes shine {
+    0% {
+      left: -100px;
+    }
+  
+    60% {
+      left: 100%;
+    }
+  
+    to {
+      left: 100%;
+    }
+  }
+  
