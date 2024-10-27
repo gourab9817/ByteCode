@@ -1,118 +1,81 @@
+import os
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import os
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Dense, LSTM
+import tensorflow as tf
+from sklearn.metrics import mean_squared_error
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+from tensorflow.keras.callbacks import EarlyStopping
 import joblib
+import gzip
 
-# Create a directory if not exists
-def create_dir(dir_name):
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name)
+# Suppress TensorFlow warnings and errors
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 # Directories
-dataset_dir = 'flask_app'
-saved_data_dir = 'saved_data'
+processed_data_dir = "processed_data"
+scalers_encoders_dir = "scalers_encoders"
+models_dir = "models"
 
-create_dir(saved_data_dir)
+# Ensure directory exists
+os.makedirs(models_dir, exist_ok=True)
 
-# Data Preprocessing
+def format_commodity_name(commodity):
+    """Format commodity name to be used in file paths."""
+    return commodity.replace("(", "_").replace(")", "_").replace(" ", "_").replace("/", "_")
 
-# Load Data
-data = pd.read_csv(os.path.join(dataset_dir, 'dataset.csv'))
+def build_and_train_model(X_train, y_train, X_test, y_test):
+    # Reshape X_train to be 3D for LSTM
+    X_train = np.reshape(X_train.values, (X_train.shape[0], 1, X_train.shape[1]))
+    X_test = np.reshape(X_test.values, (X_test.shape[0], 1, X_test.shape[1]))
 
-# Filter to only use data where the unit is 'Kg'
-data = data[data['Unit'] == 'Kg']
+    # Define model
+    model = Sequential([
+        LSTM(50, activation='relu', input_shape=(X_train.shape[1], X_train.shape[2])),
+        Dense(1)
+    ])
+    model.compile(optimizer='adam', loss='mse')
 
-# Extract unique commodity names and save for future use
-commodity_names = list(data['Commodity'].unique())
-joblib.dump(commodity_names, os.path.join(saved_data_dir, 'commodity_names.pkl'))
+    # Early stopping
+    early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 
+    # Train model
+    history = model.fit(
+        X_train, y_train,
+        epochs=100,
+        batch_size=32,
+        validation_data=(X_test, y_test),
+        callbacks=[early_stop],
+        verbose=2,
+        shuffle=False
+    )
+    return model, history
 
-# Data Preprocessing
-data = pd.read_csv('flask_app/dataset.csv')
-data = data[data['Unit'] == 'Kg']
-commodity_names = list(data['Commodity'].unique())
-joblib.dump(commodity_names, 'saved_data/commodity_names.pkl')
-data = pd.get_dummies(data, columns=['Commodity'])
-data['Date'] = pd.to_datetime(data['Date'], errors='coerce')
-data['Year'] = data['Date'].dt.year.astype(float)
-data['Month'] = data['Date'].dt.month.astype(float)
-data['Day'] = data['Date'].dt.day.astype(float)
-data = data.drop(columns=['Date', 'Unit', 'SN'])
-data = data.dropna()
-for col in data.columns:
-    data[col] = pd.to_numeric(data[col], errors='coerce')
-target = ['Minimum', 'Maximum']
-features = [col for col in data.columns if col not in target]
-X = data[features]
-y = data[target]
-scaler_X = StandardScaler().fit(X)
-X_scaled = scaler_X.transform(X)
-scaler_y = StandardScaler().fit(y)
-y_scaled = scaler_y.transform(y)
-X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_scaled, test_size=0.2, random_state=42)
-X_train = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))
-X_test = X_test.reshape((X_test.shape[0], 1, X_test.shape[1]))
+# Extract commodities from filenames
+commodities = set(file.replace("_X_train.csv", "") for file in os.listdir(processed_data_dir) if "_X_train.csv" in file)
 
-# Model Building & Training
-model = Sequential([
-    LSTM(50, activation='relu', input_shape=(X_train.shape[1], X_train.shape[2])),
-    Dense(2)
-])
-model.compile(optimizer='adam', loss='mse')
-print("Model Training...")
-history = model.fit(
-    X_train, y_train,
-    epochs=50,
-    batch_size=32,
-    validation_data=(X_test, y_test),
-    verbose=2,
-    shuffle=False
-)
-model.save('lstm_model.h5')
-print("Model Saved!")
+print("Identified commodities: ", commodities)
 
-# Predicting values
-y_pred = model.predict(X_test)
+for commodity in commodities:
+    formatted_commodity_name = format_commodity_name(commodity)
 
-# Inverting scaling for prediction and actual values
-y_pred_original = scaler_y.inverse_transform(y_pred)
-y_test_original = scaler_y.inverse_transform(y_test)
+    # Load data
+    X_train = pd.read_csv(os.path.join(processed_data_dir, f"{formatted_commodity_name}_X_train.csv"))
+    y_train = pd.read_csv(os.path.join(processed_data_dir, f"{formatted_commodity_name}_y_train.csv"))
+    X_test = pd.read_csv(os.path.join(processed_data_dir, f"{formatted_commodity_name}_X_test.csv"))
+    y_test = pd.read_csv(os.path.join(processed_data_dir, f"{formatted_commodity_name}_y_test.csv"))
 
-# Calculating Mean Absolute Error, Mean Squared Error, and R2 Score
-mae = mean_absolute_error(y_test_original, y_pred_original)
-mse = mean_squared_error(y_test_original, y_pred_original)
-r2 = r2_score(y_test_original, y_pred_original)
+    print(f"\nShape of X_train for {commodity}: {X_train.shape}")
 
-print(f'Mean Absolute Error: {mae}')
-print(f'Mean Squared Error: {mse}')
-print(f'R2 Score: {r2}')
+    # Train model
+    model, history = build_and_train_model(X_train, y_train, X_test, y_test)
 
-# Visualizing Model Training History
+    # Save model
+    model_filename = os.path.join(models_dir, f"{formatted_commodity_name}_model.h5")
+    model.save(model_filename)
 
-plt.figure(figsize=(10,5))
-plt.plot(history.history['loss'], label='Training Loss')
-plt.plot(history.history['val_loss'], label='Validation Loss')
-plt.title('Model Loss Progress During Training')
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.legend()
-plt.show()
-
-# Save models and scalers
-model.save(os.path.join(saved_data_dir, 'lstm_model.h5'))
-
-np.save(os.path.join(saved_data_dir, 'X_train.npy'), X_train)
-np.save(os.path.join(saved_data_dir, 'X_test.npy'), X_test)
-np.save(os.path.join(saved_data_dir, 'y_train.npy'), y_train)
-np.save(os.path.join(saved_data_dir, 'y_test.npy'), y_test)
-
-joblib.dump(scaler_X, os.path.join(saved_data_dir, 'scaler_X.pkl'))
-joblib.dump(scaler_y, os.path.join(saved_data_dir, 'scaler_y.pkl'))
-
-print("Model, data, and scalers saved!")
+    # Evaluate model
+    predictions = model.predict(X_test)
+    rmse = np.sqrt(mean_squared_error(y_test, predictions))
+    print(f"{commodity} Test RMSE: {rmse:.3f}")
