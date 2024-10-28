@@ -1,4 +1,4 @@
-Here’s the README in `.md` format:
+Here’s the README which describes how to execute this project
 
 ```markdown
 # ByteCode Project
