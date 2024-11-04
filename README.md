@@ -85,7 +85,7 @@ This project integrates machine learning models with a Flask-based web interface
 
 ---
 
-## Contributing
+## 🤝 Contribution Guidelines
 
 To contribute to this project:
 
