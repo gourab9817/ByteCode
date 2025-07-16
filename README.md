@@ -94,6 +94,8 @@ To contribute to this project:
    git checkout -b feature/YourFeature
    ```
 2. Commit your changes and push to your branch:
+
+   
    ```bash
    git commit -m "Add feature description"
    git push origin feature/YourFeature
