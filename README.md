@@ -34,6 +34,7 @@ This project integrates machine learning models with a Flask-based web interface
 3. **Configure Data Paths**  
    - The `ByteCode` directory contains all data files, training and testing scripts, and Flask applications.
    - Update the path for `dataset.csv` in your code to match your local directory structure.
+   - Along with look up the model setup.
 
 ---
 
