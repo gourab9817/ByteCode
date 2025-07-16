@@ -1,4 +1,4 @@
-Here’s the README which describes how to execute this project
+Here’s the README which describes how to execute this project and project description
 
 ```markdown
 # ByteCode Project
